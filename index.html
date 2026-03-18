@@ -1,445 +1,974 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Rainbot — Casino Economy Bot for Discord</title>
-<meta name="description" content="The ultimate casino economy bot for Discord. 25+ games, prestige system, tournaments, daily challenges and more.">
-<meta name="theme-color" content="#7C3AED">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-:root{
-  --bg:#08090c;--card:#0e1015;--card2:#12141a;--border:#1e2028;
-  --purple:#7c3aed;--purple2:#a855f7;--purple3:#c084fc;--glow:#7c3aed22;
-  --green:#22c55e;--red:#ef4444;--amber:#f59e0b;--blue:#3b82f6;
-  --text:#e8eaed;--muted:#9ca3af;--dim:#6b7280;
-}
-html{scroll-behavior:smooth}
-body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;-webkit-font-smoothing:antialiased}
-a{color:var(--purple2);text-decoration:none;transition:color .2s}
-a:hover{color:var(--purple3)}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chicago City Police Department</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-/* ── Loader ─────────────────────────────── */
-#loader{position:fixed;inset:0;z-index:99999;background:#1a1e35;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;transition:opacity .6s ease,visibility .6s ease}
-#loader.out{opacity:0;visibility:hidden;pointer-events:none}
-.loader-word{position:relative;font-size:clamp(32px,6vw,52px);font-weight:900;letter-spacing:-1px;user-select:none;-webkit-text-stroke:1px rgba(255,255,255,.12);color:transparent}
-.loader-word::after{content:attr(data-text);position:absolute;inset:0;color:#fff;-webkit-text-fill-color:#fff;clip-path:inset(0 100% 0 0);animation:loader-fill 2s cubic-bezier(.4,0,.2,1) forwards}
-@keyframes loader-fill{0%{clip-path:inset(0 100% 0 0)}70%{clip-path:inset(0 0% 0 0)}100%{clip-path:inset(0 0% 0 0)}}
-.loader-track{width:140px;height:2px;background:rgba(255,255,255,.08);border-radius:99px;overflow:hidden}
-.loader-prog{height:100%;width:0;background:linear-gradient(90deg,var(--purple),var(--purple2));border-radius:99px;animation:loader-bar 2.4s cubic-bezier(.4,0,.2,1) forwards}
-@keyframes loader-bar{0%{width:0}80%{width:100%}100%{width:100%}}
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+        }
 
-/* ── Noise ──────────────────────────────── */
-.noise{position:fixed;inset:0;pointer-events:none;opacity:.018;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");z-index:9999}
+        /* Modern Loading Screen with City Skyline */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1e40af 0%, #0284c7 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.6s ease, visibility 0.6s ease;
+        }
 
-/* ── Nav ────────────────────────────────── */
-nav{position:fixed;top:0;width:100%;z-index:100;padding:16px 0;transition:all .3s}
-nav.scrolled{background:rgba(8,9,12,.92);backdrop-filter:blur(24px);border-bottom:1px solid var(--border)}
-.nav-inner{max-width:1160px;margin:0 auto;padding:0 32px;display:flex;justify-content:space-between;align-items:center}
-.nav-logo{font-size:20px;font-weight:800;letter-spacing:-.5px;color:var(--text);display:flex;align-items:center;gap:8px}
-.nav-logo span{color:var(--purple2)}
-.nav-links{display:flex;gap:28px;align-items:center}
-.nav-links a{color:var(--muted);font-size:14px;font-weight:500;transition:color .2s}
-.nav-links a:hover{color:var(--text)}
-.btn{padding:10px 22px;border-radius:10px;font-weight:600;font-size:14px;border:none;cursor:pointer;transition:all .22s;display:inline-flex;align-items:center;gap:8px;font-family:'Outfit',sans-serif;text-decoration:none}
-.btn-primary{background:var(--purple);color:#fff}
-.btn-primary:hover{background:#6d28d9;transform:translateY(-1px);box-shadow:0 8px 32px #7c3aed40;color:#fff}
-.btn-outline{background:transparent;color:var(--text);border:1px solid var(--border)}
-.btn-outline:hover{border-color:var(--purple);color:var(--purple2)}
-.btn-lg{padding:14px 34px;font-size:16px;border-radius:12px}
+        .loading-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
 
-/* ── Hero ───────────────────────────────── */
-.hero{padding:168px 32px 110px;text-align:center;position:relative}
-.hero::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:900px;height:600px;background:radial-gradient(ellipse,#7c3aed18,transparent 68%);pointer-events:none}
-.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 16px;border-radius:40px;border:1px solid var(--border);background:var(--card);font-size:13px;color:var(--muted);margin-bottom:28px}
-.hero-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-.hero h1{font-size:clamp(42px,6.5vw,78px);font-weight:900;letter-spacing:-3px;line-height:1.02;margin-bottom:22px;background:linear-gradient(135deg,#fff 0%,var(--muted) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.hero p{font-size:18px;color:var(--muted);max-width:540px;margin:0 auto 44px;line-height:1.65;font-weight:300}
-.hero-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
-.hero-stats{display:flex;gap:52px;justify-content:center;margin-top:72px;flex-wrap:wrap}
-.hero-stat .num{font-size:30px;font-weight:800;font-family:'JetBrains Mono',monospace;color:var(--text)}
-.hero-stat .lbl{font-size:13px;color:var(--dim);margin-top:4px}
+        /* City Skyline Animation */
+        .city-skyline {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 200px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            gap: 4px;
+            padding: 0 2rem;
+            opacity: 0.3;
+        }
 
-/* ── Live Feed ──────────────────────────── */
-.live-feed{background:var(--card);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:12px 0;overflow:hidden;position:relative}
-.live-feed::before,.live-feed::after{content:'';position:absolute;top:0;width:120px;height:100%;z-index:2;pointer-events:none}
-.live-feed::before{left:0;background:linear-gradient(90deg,var(--card),transparent)}
-.live-feed::after{right:0;background:linear-gradient(-90deg,var(--card),transparent)}
-.feed-track{display:flex;gap:48px;animation:feed-scroll 28s linear infinite;width:max-content}
-.feed-track:hover{animation-play-state:paused}
-.feed-item{display:flex;align-items:center;gap:10px;font-size:13px;white-space:nowrap;color:var(--muted)}
-.feed-item .win-amt{color:var(--green);font-weight:600;font-family:'JetBrains Mono',monospace}
-.feed-item .loss-amt{color:var(--red);font-weight:600;font-family:'JetBrains Mono',monospace}
-.feed-item .game-tag{color:var(--purple2);font-weight:600}
-@keyframes feed-scroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+        .building {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px 2px 0 0;
+            animation: buildingGrow 1.5s ease-out forwards;
+            position: relative;
+        }
 
-/* ── Sections ───────────────────────────── */
-section{padding:100px 32px}
-.inner{max-width:1160px;margin:0 auto}
-.section-label{font-size:11px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--purple2);margin-bottom:12px}
-.section-title{font-size:clamp(28px,4vw,42px);font-weight:800;letter-spacing:-1.2px;margin-bottom:16px}
-.section-desc{font-size:16px;color:var(--muted);max-width:520px;line-height:1.65;font-weight:300}
+        .building::before {
+            content: '';
+            position: absolute;
+            top: 10%;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.3);
+        }
 
-/* ── Games Grid ─────────────────────────── */
-.games-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px;margin-top:48px}
-.game-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:26px;transition:all .28s;position:relative;overflow:hidden;cursor:default}
-.game-card:hover{border-color:var(--purple);transform:translateY(-4px);box-shadow:0 16px 48px rgba(0,0,0,.35)}
-.game-card::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--purple),var(--purple2));opacity:0;transition:opacity .28s}
-.game-card:hover::after{opacity:1}
-.game-icon{font-size:30px;margin-bottom:14px;display:block}
-.game-card h3{font-size:16px;font-weight:700;margin-bottom:6px}
-.game-card p{font-size:13px;color:var(--dim);line-height:1.5}
-.mult{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--green);margin-top:10px;display:inline-block;padding:3px 9px;border-radius:6px;background:rgba(34,197,94,.1)}
-.new-badge{position:absolute;top:14px;right:14px;font-size:9px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:#fff;background:var(--purple);padding:3px 7px;border-radius:5px}
+        .building:nth-child(1) { width: 40px; height: 120px; animation-delay: 0s; }
+        .building:nth-child(2) { width: 50px; height: 160px; animation-delay: 0.1s; }
+        .building:nth-child(3) { width: 35px; height: 100px; animation-delay: 0.2s; }
+        .building:nth-child(4) { width: 60px; height: 180px; animation-delay: 0.3s; }
+        .building:nth-child(5) { width: 45px; height: 140px; animation-delay: 0.4s; }
+        .building:nth-child(6) { width: 55px; height: 150px; animation-delay: 0.5s; }
+        .building:nth-child(7) { width: 40px; height: 110px; animation-delay: 0.6s; }
+        .building:nth-child(8) { width: 50px; height: 170px; animation-delay: 0.7s; }
 
-/* ── Feature Cards ──────────────────────── */
-.feat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin-top:48px}
-.feat-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:30px;transition:border-color .28s}
-.feat-card:hover{border-color:var(--purple)}
-.feat-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:16px;background:var(--card2);border:1px solid var(--border)}
-.feat-card h3{font-size:15px;font-weight:700;margin-bottom:8px}
-.feat-card p{font-size:13px;color:var(--dim);line-height:1.6}
+        @keyframes buildingGrow {
+            from { transform: scaleY(0); opacity: 0; }
+            to { transform: scaleY(1); opacity: 1; }
+        }
 
-/* ── Progression Section ────────────────── */
-.prog-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;margin-top:48px}
-.prog-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;transition:all .28s;position:relative;overflow:hidden}
-.prog-card:hover{border-color:var(--purple);transform:translateY(-3px)}
-.prog-card .accent{position:absolute;top:0;left:0;right:0;height:3px}
-.prog-card.purple .accent{background:linear-gradient(90deg,var(--purple),var(--purple2))}
-.prog-card.green  .accent{background:linear-gradient(90deg,var(--green),#16a34a)}
-.prog-card.amber  .accent{background:linear-gradient(90deg,var(--amber),#d97706)}
-.prog-card.blue   .accent{background:linear-gradient(90deg,var(--blue),#1d4ed8)}
-.prog-card.red    .accent{background:linear-gradient(90deg,var(--red),#b91c1c)}
-.prog-card.pink   .accent{background:linear-gradient(90deg,#ec4899,#be185d)}
-.prog-card h3{font-size:16px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:8px}
-.prog-card p{font-size:13px;color:var(--dim);line-height:1.6}
+        .loading-content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+        }
 
-/* ── Steps ──────────────────────────────── */
-.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:48px}
-.step{text-align:center;padding:32px 24px}
-.step-num{font-family:'JetBrains Mono',monospace;font-size:52px;font-weight:800;color:var(--purple);opacity:.25;margin-bottom:8px}
-.step h3{font-size:17px;font-weight:700;margin-bottom:8px}
-.step p{font-size:14px;color:var(--dim);line-height:1.55}
+        .loading-badge {
+            width: 100px;
+            height: 100px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+            animation: float 3s ease-in-out infinite;
+        }
 
-/* ── Commands ───────────────────────────── */
-.cmd-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(195px,1fr));gap:8px;margin-top:32px}
-.cmd{display:flex;align-items:center;gap:9px;padding:11px 14px;background:var(--card);border:1px solid var(--border);border-radius:10px;transition:border-color .2s;position:relative}
-.cmd:hover{border-color:var(--purple)}
-.cmd code{font-family:'JetBrains Mono',monospace;color:var(--purple2);font-size:12px}
-.cmd span{color:var(--dim);font-size:12px}
-.cmd .ntag{font-size:8px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--purple2);border:1px solid var(--purple);border-radius:4px;padding:1px 5px;margin-left:auto;flex-shrink:0}
+        .logo-box {
+            width: 60px;
+            height: 60px;
+            background: #0284c7;
+            border-radius: 6px;
+            position: relative;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
 
+        .logo-star {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 35px;
+            height: 35px;
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+            background: #dc2626;
+        }
 
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
 
-/* ── CTA ────────────────────────────────── */
-.cta{text-align:center;padding:130px 32px;position:relative}
-.cta::before{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:700px;height:500px;background:radial-gradient(ellipse,#7c3aed14,transparent 68%);pointer-events:none}
-.cta h2{font-size:clamp(32px,5vw,52px);font-weight:900;letter-spacing:-2px;margin-bottom:16px}
-.cta p{color:var(--muted);font-size:17px;margin-bottom:40px;font-weight:300}
+        .loading-text {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-align: center;
+        }
 
-/* ── Footer ─────────────────────────────── */
-footer{border-top:1px solid var(--border);padding:40px 32px}
-.foot-inner{max-width:1160px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}
-.foot-links{display:flex;gap:24px}
-.foot-links a,.foot-copy{color:var(--dim);font-size:13px}
-.foot-links a:hover{color:var(--text)}
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 3px solid rgba(255, 255, 255, 0.2);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
 
-/* ── Misc ───────────────────────────────── */
-@media(max-width:768px){
-  .nav-links a:not(.btn){display:none}
-  .hero-stats{gap:28px}
-  .steps{grid-template-columns:1fr;gap:0}
-  .foot-inner{flex-direction:column;text-align:center}
-}
-.fade{opacity:0;transform:translateY(22px);transition:all .65s cubic-bezier(.16,1,.3,1)}
-.fade.in{opacity:1;transform:translateY(0)}
-.tag{display:inline-block;padding:4px 12px;border-radius:6px;font-size:12px;font-weight:600;letter-spacing:.5px}
-.tag-green{background:rgba(34,197,94,.12);color:var(--green)}
-.tag-purple{background:rgba(124,58,237,.15);color:var(--purple2)}
-.tag-amber{background:rgba(245,158,11,.12);color:var(--amber)}
-</style>
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        body.loading .header,
+        body.loading .page,
+        body.loading .footer {
+            display: none;
+        }
+
+        /* Header */
+        .header {
+            background: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-top {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1.25rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .header-logo-box {
+            width: 42px;
+            height: 42px;
+            background: #0284c7;
+            border-radius: 4px;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .header-logo-star {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 24px;
+            height: 24px;
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+            background: #dc2626;
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2c3e50;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.625rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-outline {
+            background: white;
+            border: 2px solid #d1d5db;
+            color: #374151;
+        }
+
+        .btn-outline:hover {
+            border-color: #0284c7;
+            color: #0284c7;
+        }
+
+        .btn-primary {
+            background: #0284c7;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #0369a1;
+        }
+
+        .btn-login {
+            background: #2c3e50;
+            color: white;
+        }
+
+        .btn-login:hover {
+            background: #34495e;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #374151;
+        }
+
+        /* Navigation */
+        .navigation {
+            background: white;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .nav-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            gap: 2.5rem;
+        }
+
+        .nav-link {
+            padding: 1rem 0;
+            color: #374151;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            position: relative;
+            transition: color 0.2s ease;
+        }
+
+        .nav-link:hover {
+            color: #0284c7;
+        }
+
+        .nav-link.active {
+            color: #0284c7;
+        }
+
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: #0284c7;
+        }
+
+        /* Page Title Bar */
+        .page-title-bar {
+            background: #f8f9fa;
+            padding: 2rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .page-title-content {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin: 0;
+        }
+
+        /* Content Wrapper */
+        .content-wrapper {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        /* Cards Grid */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+
+        .card {
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+            min-height: 280px;
+            display: flex;
+            align-items: flex-end;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-large {
+            grid-column: span 2;
+            min-height: 400px;
+        }
+
+        .card-bg {
+            position: absolute;
+            inset: 0;
+            background-size: cover;
+            background-position: center;
+            z-index: 0;
+        }
+
+        .card-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.3) 60%, transparent 100%);
+            z-index: 1;
+        }
+
+        .card-content {
+            position: relative;
+            z-index: 2;
+            padding: 2rem;
+            color: white;
+            width: 100%;
+        }
+
+        .card-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            line-height: 1.2;
+        }
+
+        .card-description {
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+            opacity: 0.95;
+        }
+
+        /* Login Portal */
+        .login-container {
+            min-height: calc(100vh - 200px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem 2rem;
+        }
+
+        .login-box {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            padding: 3rem;
+            max-width: 450px;
+            width: 100%;
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .login-logo {
+            width: 80px;
+            height: 80px;
+            background: #0284c7;
+            border-radius: 8px;
+            margin: 0 auto 1.5rem;
+            position: relative;
+        }
+
+        .login-logo-star {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 45px;
+            height: 45px;
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+            background: #dc2626;
+        }
+
+        .login-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+
+        .login-subtitle {
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            transition: border-color 0.2s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #0284c7;
+        }
+
+        .btn-login-submit {
+            width: 100%;
+            padding: 0.875rem;
+            background: #0284c7;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .btn-login-submit:hover {
+            background: #0369a1;
+        }
+
+        .login-footer {
+            margin-top: 2rem;
+            text-align: center;
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+
+        .login-footer a {
+            color: #0284c7;
+            text-decoration: none;
+        }
+
+        .login-footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Service Cards */
+        .service-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .service-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .service-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        }
+
+        .service-card h3 {
+            font-size: 1.25rem;
+            color: #2c3e50;
+            margin-bottom: 0.75rem;
+        }
+
+        .service-card p {
+            color: #6b7280;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Leadership Grid */
+        .leadership-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .leadership-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            text-align: center;
+        }
+
+        .rank-badge {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+            border-radius: 50%;
+            margin: 0 auto 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            font-weight: 700;
+        }
+
+        .leadership-card h3 {
+            font-size: 1.1rem;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+
+        .leadership-card .position {
+            color: #6b7280;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .leadership-card .status {
+            color: #9ca3af;
+            font-size: 0.85rem;
+            font-style: italic;
+        }
+
+        /* Page Content */
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        .page-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .page-content h2 {
+            font-size: 1.875rem;
+            color: #2c3e50;
+            margin-bottom: 1rem;
+        }
+
+        .page-content p {
+            color: #4b5563;
+            line-height: 1.8;
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Footer */
+        .footer {
+            background: #2c3e50;
+            color: white;
+            padding: 3rem 2rem 1.5rem;
+            margin-top: 4rem;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h4 {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            color: white;
+        }
+
+        .footer-section p {
+            color: #cbd5e1;
+            line-height: 1.6;
+        }
+
+        .footer-section a {
+            display: block;
+            color: #cbd5e1;
+            text-decoration: none;
+            margin-bottom: 0.75rem;
+            transition: color 0.2s ease;
+        }
+
+        .footer-section a:hover {
+            color: #0284c7;
+        }
+
+        .footer-bottom {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding-top: 2rem;
+            border-top: 1px solid #475569;
+            text-align: center;
+            color: #cbd5e1;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .cards-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .card-large {
+                grid-column: span 2;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .logo-text {
+                font-size: 1rem;
+            }
+
+            .header-actions .btn-outline {
+                display: none;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .nav-content {
+                display: none;
+                flex-direction: column;
+                gap: 0;
+                padding: 0;
+            }
+
+            .nav-content.mobile-open {
+                display: flex;
+            }
+
+            .nav-link {
+                padding: 1rem 2rem;
+                border-top: 1px solid #e5e7eb;
+            }
+
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .card-large {
+                grid-column: 1;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .city-skyline {
+                height: 150px;
+            }
+
+            .building {
+                transform: scale(0.7);
+            }
+        }
+    </style>
 </head>
-<body>
-
-<!-- LOADER -->
-<div id="loader">
-  <div class="loader-word" data-text="🌧️ Rainbot">🌧️ Rainbot</div>
-  <div class="loader-track"><div class="loader-prog"></div></div>
-</div>
-
-<div class="noise"></div>
-
-<!-- NAV -->
-<nav id="nav">
-  <div class="nav-inner">
-    <div class="nav-logo">🌧️ Rain<span>bot</span></div>
-    <div class="nav-links">
-      <a href="#games">Games</a>
-      <a href="#progression">Progression</a>
-      <a href="#features">Economy</a>
-      <a href="#commands">Commands</a>
-      <a href="https://discord.com/oauth2/authorize?client_id=1478876093120512000&permissions=4504563847882960&integration_type=0&scope=bot+applications.commands" class="btn btn-primary">Add to Discord</a>
+<body class="loading">
+    <!-- Modern Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="city-skyline">
+            <div class="building"></div>
+            <div class="building"></div>
+            <div class="building"></div>
+            <div class="building"></div>
+            <div class="building"></div>
+            <div class="building"></div>
+            <div class="building"></div>
+            <div class="building"></div>
+        </div>
+        <div class="loading-content">
+            <div class="loading-badge">
+                <div class="logo-box">
+                    <div class="logo-star"></div>
+                </div>
+            </div>
+            <div class="loading-text">Chicago City Police</div>
+            <div class="loading-spinner"></div>
+        </div>
     </div>
-  </div>
-</nav>
 
-<!-- HERO -->
-<div class="hero">
-  <div class="hero-badge"><span class="dot"></span> Online and ready</div>
-  <h1>The casino experience<br>built for Discord</h1>
-  <p>25+ interactive games, prestige system, daily challenges, tournaments, loans, bounties and a full economy. All powered by buttons.</p>
-  <div class="hero-btns">
-    <a href="https://discord.com/oauth2/authorize?client_id=1478876093120512000&permissions=4504563847882960&integration_type=0&scope=bot+applications.commands" class="btn btn-primary btn-lg">Add to Discord</a>
-    <a href="#games" class="btn btn-outline btn-lg">See Games</a>
-  </div>
-  <div class="hero-stats">
-    <div class="hero-stat"><div class="num">25+</div><div class="lbl">Casino Games</div></div>
-    <div class="hero-stat"><div class="num">40+</div><div class="lbl">Commands</div></div>
-    <div class="hero-stat"><div class="num">10</div><div class="lbl">Achievements</div></div>
-    <div class="hero-stat"><div class="num">24/7</div><div class="lbl">Uptime</div></div>
-  </div>
-</div>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-top">
+            <div class="logo-section" onclick="showPage('home')">
+                <div class="header-logo-box">
+                    <div class="header-logo-star"></div>
+                </div>
+                <span class="logo-text">Chicago Police Department</span>
+            </div>
 
-<!-- LIVE FEED -->
-<div class="live-feed">
-  <div class="feed-track" id="feedTrack"></div>
-</div>
+            <div class="header-actions">
+                <button class="btn btn-outline">Transform</button>
+                <a href="https://discord.gg/7vQEJnaD" target="_blank" class="btn btn-primary">Join CPD</a>
+                <button class="btn btn-login" onclick="showPage('login')">Portal Login</button>
+                <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
+            </div>
+        </div>
 
-<!-- GAMES -->
-<section id="games">
-  <div class="inner fade">
-    <div class="section-label">Games</div>
-    <div class="section-title">25+ games, all button-powered</div>
-    <div class="section-desc">No typing, no confusion. Every game uses interactive Discord buttons for instant play.</div>
-    <div class="games-grid">
-      <div class="game-card"><span class="game-icon">💣</span><h3>Mines</h3><p>5×5 grid. Reveal gems, avoid bombs. Cash out anytime.</p><span class="mult">Up to 24x</span></div>
-      <div class="game-card"><span class="game-icon">🃏</span><h3>Blackjack</h3><p>Classic 21. Hit, stand, or double down against the dealer.</p><span class="mult">2.5x on blackjack</span></div>
-      <div class="game-card"><span class="game-icon">📈</span><h3>Crash</h3><p>Watch the multiplier climb. Cash out before it crashes.</p><span class="mult">No limit</span></div>
-      <div class="game-card"><span class="game-icon">🗼</span><h3>Towers</h3><p>Pick the safe door across 8 levels. Go higher for more.</p><span class="mult">Up to 6,561x</span></div>
-      <div class="game-card"><span class="game-icon">🎰</span><h3>Slots</h3><p>3×3 reel machine with 7 symbols. Match them for big payouts.</p><span class="mult">Up to 200x</span></div>
-      <div class="game-card"><span class="game-icon">🎯</span><h3>Roulette</h3><p>European rules. Bet on red, black, green, odd, even, high or low.</p><span class="mult">Up to 36x</span></div>
-      <div class="game-card"><span class="game-icon">🂠</span><h3>Baccarat</h3><p>Full Punto Banco rules. Player, banker, or tie.</p><span class="mult">Up to 9x</span></div>
-      <div class="game-card"><span class="game-icon">🪙</span><h3>Coinflip</h3><p>Heads or tails. Quick, simple, instant.</p><span class="mult">1.95x</span></div>
-      <div class="game-card"><span class="game-icon">🎲</span><h3>Dice</h3><p>Set a target, bet over or under. Dynamic odds.</p><span class="mult">Up to 96x</span></div>
-      <div class="game-card"><span class="game-icon">🐔</span><h3>Chicken Cross</h3><p>Cross 10 lanes of traffic. Each lane gets riskier.</p><span class="mult">Up to 15x</span></div>
-      <div class="game-card"><span class="game-icon">✂️</span><h3>Rock Paper Scissors</h3><p>Classic RPS against the bot. Instant button result.</p><span class="mult">1.95x</span></div>
-      <div class="game-card"><span class="game-icon">🎡</span><h3>Wheel</h3><p>Spin a weighted prize wheel with 9 segments.</p><span class="mult">Up to 50x</span></div>
-      <div class="game-card"><span class="game-icon">📍</span><h3>Plinko</h3><p>Drop a ball through pegs. Low, medium, or high risk.</p><span class="mult">Up to 10x</span></div>
-      <div class="game-card"><span class="game-icon">✖</span><h3>Limbo</h3><p>Set your own target multiplier. You control the risk.</p><span class="mult">Up to 1000x</span></div>
-      <div class="game-card"><span class="game-icon">🎱</span><h3>Keno</h3><p>Pick up to 10 numbers from 40. More matches = bigger prize.</p><span class="mult">Up to 2,000x</span></div>
-      <div class="game-card"><span class="new-badge">NEW</span><span class="game-icon">🎟️</span><h3>Scratch Card</h3><p>Scratch 9 tiles. Match 3 in a row to win.</p><span class="mult">Up to 200x</span></div>
-      <div class="game-card"><span class="new-badge">NEW</span><span class="game-icon">♠️</span><h3>Video Poker</h3><p>Hold your best cards, redraw the rest. Jacks or Better pays.</p><span class="mult">Up to 800x</span></div>
-      <div class="game-card"><span class="new-badge">NEW</span><span class="game-icon">🔢</span><h3>Higher or Lower</h3><p>Guess if the next number is higher or lower. Chain your wins.</p><span class="mult">Up to 17x streak</span></div>
-      <div class="game-card"><span class="new-badge">NEW</span><span class="game-icon">🔌</span><h3>Bomb Defuser</h3><p>Cut wires in the correct order. Each cut multiplies your bet.</p><span class="mult">Up to 17x</span></div>
-      <div class="game-card"><span class="new-badge">NEW</span><span class="game-icon">🏦</span><h3>Heist</h3><p>Group game. Pool bets and crack the vault together.</p><span class="mult">1.5x pot split</span></div>
-      <div class="game-card"><span class="new-badge">NEW</span><span class="game-icon">🎲</span><h3>Dice Duel</h3><p>Challenge another user. Both roll — highest takes the pot.</p><span class="mult">2x winner takes all</span></div>
-      <div class="game-card"><span class="new-badge">NEW</span><span class="game-icon">📊</span><h3>Stocks</h3><p>Buy and sell 6 stocks with prices that update every 10 minutes.</p><span class="mult">Unlimited upside</span></div>
-      <div class="game-card"><span class="new-badge">NEW</span><span class="game-icon">🎁</span><h3>Gift Boxes</h3><p>Mystery boxes in three tiers. Random coins or items inside.</p><span class="mult">Up to 100x</span></div>
+        <nav class="navigation">
+            <div class="nav-content" id="navigation">
+                <a href="#" class="nav-link" onclick="showPage('news'); return false;">News & Media</a>
+                <a href="#" class="nav-link" onclick="showPage('service'); return false;">Get Service</a>
+                <a href="#" class="nav-link" onclick="showPage('community'); return false;">Community Policing</a>
+                <a href="#" class="nav-link" onclick="showPage('inside'); return false;">Inside CCPD</a>
+                <a href="#" class="nav-link" onclick="showPage('documents'); return false;">Documents</a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Home Page -->
+    <div id="home-page" class="page active">
+        <div class="page-title-bar">
+            <div class="page-title-content">
+                <h1 class="page-title">We serve and protect.</h1>
+            </div>
+        </div>
+
+        <div class="content-wrapper">
+            <div class="cards-grid">
+                <!-- Join CPD Card -->
+                <div class="card card-large" onclick="window.open('https://discord.gg/7vQEJnaD', '_blank')">
+                    <div class="card-bg" style="background-image: url('join-bg.jpg')"></div>
+                    <div class="card-overlay"></div>
+                    <div class="card-content">
+                        <h2 class="card-title">Join CPD</h2>
+                        <p class="card-description">
+                            Make a difference within your community and help the people of Chicago City.
+                            Answer the call to serve those in need and begin building a better tomorrow today.
+                        </p>
+                        <a href="https://discord.gg/7vQEJnaD" target="_blank" class="btn btn-primary" onclick="event.stopPropagation()">
+                            Get Started
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Superintendent -->
+                <div class="card" onclick="showPage('leadership')">
+                    <div class="card-bg" style="background-image: url('super-bg.jpg')"></div>
+                    <div class="card-overlay"></div>
+                    <div class="card-content">
+                        <h2 class="card-title">Superintendent Larry Snelling</h2>
+                        <button class="btn btn-primary" onclick="showPage('leadership'); event.stopPropagation()">
+                            Learn About Us
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Help Solve Crimes -->
+                <div class="card" onclick="showPage('community')">
+                    <div class="card-bg" style="background-image: url('crimes-bg.jpg')"></div>
+                    <div class="card-overlay"></div>
+                    <div class="card-content">
+                        <h2 class="card-title">Help Solve Crimes</h2>
+                        <p class="card-description">Identify subjects on the video page.</p>
+                        <button class="btn btn-primary" onclick="showPage('community'); event.stopPropagation()">
+                            Watch Videos
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Use of Force -->
+                <div class="card card-large" onclick="showPage('use-of-force')">
+                    <div class="card-bg" style="background-image: url('policy-bg.jpg')"></div>
+                    <div class="card-overlay"></div>
+                    <div class="card-content">
+                        <h2 class="card-title">Use of Force Policy Reform</h2>
+                        <p class="card-description">
+                            Policies dictate Department members' ability to use force.
+                        </p>
+                        <button class="btn btn-primary" onclick="showPage('use-of-force'); event.stopPropagation()">
+                            Read More
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Documents -->
+                <div class="card" onclick="showPage('documents')">
+                    <div class="card-bg" style="background-color: #1e40af;"></div>
+                    <div class="card-overlay"></div>
+                    <div class="card-content">
+                        <h2 class="card-title">Documents</h2>
+                        <p class="card-description">Access department policies and public records.</p>
+                        <button class="btn btn-primary" onclick="showPage('documents'); event.stopPropagation()">
+                            View Documents
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
-</section>
 
-<!-- PROGRESSION -->
-<section id="progression" style="background:var(--card)">
-  <div class="inner fade">
-    <div class="section-label">Progression</div>
-    <div class="section-title">Always something to work toward</div>
-    <div class="section-desc">Prestige, achievements, streaks and challenges keep every session feeling rewarding — not just the wins.</div>
-    <div class="prog-grid">
-      <div class="prog-card purple">
-        <div class="accent"></div>
-        <h3>⭐ Prestige System</h3>
-        <p>Spend 10M coins to prestige. Reset your balance for a permanent daily bonus (+5% per level) and an exclusive badge on your profile. Up to 10 prestige levels.</p>
-      </div>
-      <div class="prog-card green">
-        <div class="accent"></div>
-        <h3>📅 Daily Streak</h3>
-        <p>Claim daily coins every 24 hours. Your streak multiplies your reward — up to 2× at a 30-day streak. Miss 48 hours and it resets.</p>
-      </div>
-      <div class="prog-card amber">
-        <div class="accent"></div>
-        <h3>🎯 Daily Challenges</h3>
-        <p>Three fresh tasks every day — win 10 games, wager 50k, cash out 2x on Crash and more. Complete them for bonus coin rewards on top of your normal play.</p>
-      </div>
-      <div class="prog-card blue">
-        <div class="accent"></div>
-        <h3>🏆 Achievements</h3>
-        <p>10 permanent milestones — First Blood, Hot Streak, Millionaire, Whale, Survivor, Bounty Hunter and more. They show up on your profile forever.</p>
-      </div>
-      <div class="prog-card red">
-        <div class="accent"></div>
-        <h3>🏟️ Tournaments</h3>
-        <p>Server admins can start a timed tournament for any game. Pay the entry fee, play to profit the most, winner takes the entire pot.</p>
-      </div>
-      <div class="prog-card pink">
-        <div class="accent"></div>
-        <h3>🎰 Server Jackpot</h3>
-        <p>Every bet you place adds 1% to a shared server pot. Every 24 hours a random active player wins the whole thing — announced in your server.</p>
-      </div>
+    <!-- Login Portal Page -->
+    <div id="login-page" class="page">
+        <div class="login-container">
+            <div class="login-box">
+                <div class="login-header">
+                    <div class="login-logo">
+                        <div class="login-logo-star"></div>
+                    </div>
+                    <h2 class="login-title">Officer Portal</h2>
+                    <p class="login-subtitle">Chicago City Police Department</p>
+                </div>
+
+                <form onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label class="form-label">Badge Number</label>
+                        <input type="text" class="form-input" placeholder="Enter your badge number" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Password</label>
+                        <input type="password" class="form-input" placeholder="Enter your password" required>
+                    </div>
+
+                    <button type="submit" class="btn-login-submit">Sign In</button>
+                </form>
+
+                <div class="login-footer">
+                    <p>Forgot your password? <a href="#" onclick="alert('Please contact IT Support'); return false;">Reset Password</a></p>
+                    <p style="margin-top: 1rem;">Need access? <a href="https://discord.gg/7vQEJnaD" target="_blank">Apply to Join CCPD</a></p>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
-</section>
 
-<!-- ECONOMY -->
-<section id="features">
-  <div class="inner fade">
-    <div class="section-label">Economy</div>
-    <div class="section-title">A complete virtual economy</div>
-    <div class="section-desc">Coins flow between players, games, loans, bounties and banks. Everything is connected.</div>
-    <div class="feat-grid">
-      <div class="feat-card"><div class="feat-icon">💰</div><h3>Wallet &amp; Bank</h3><p>Keep coins in your wallet to play with or bank them to protect from robbers.</p></div>
-      <div class="feat-card"><div class="feat-icon">📅</div><h3>Daily &amp; Work</h3><p>Claim daily coins with a streak multiplier. Work every 60 seconds for extra income.</p></div>
-      <div class="feat-card"><div class="feat-icon">💸</div><h3>Send &amp; Rob</h3><p>Give coins to friends or rob other players. 55% success rate — get caught and pay a fine.</p></div>
-      <div class="feat-card"><div class="feat-icon">💳</div><h3>Loan System</h3><p>Borrow up to 500k coins with 20% interest due in 24 hours. Don't repay and your balance gets garnished automatically.</p></div>
-      <div class="feat-card"><div class="feat-icon">🎯</div><h3>Bounties</h3><p>Place a coin bounty on any player. Whoever successfully robs them claims the bounty on top of the stolen coins.</p></div>
-      <div class="feat-card"><div class="feat-icon">🎒</div><h3>Shop &amp; Inventory</h3><p>Buy Bombs, Shields and VPNs. Items affect hacking, robbing outcomes and cooldown timers.</p></div>
-      <div class="feat-card"><div class="feat-icon">💻</div><h3>Hack</h3><p>4-button sequence mini-game. Steal 10–30% of a user's wallet. Use a VPN to cut cooldown in half.</p></div>
-      <div class="feat-card"><div class="feat-icon">🏆</div><h3>Leaderboards &amp; Profile</h3><p>Compete for the top spot. Your profile shows balance, win rate, streak, prestige and achievements.</p></div>
-      <div class="feat-card"><div class="feat-icon">📜</div><h3>Bet History</h3><p>Full transaction log so you can track every win, loss, transfer, and daily claim.</p></div>
-    </div>
-  </div>
-</section>
+    <!-- Additional pages would continue here -->
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Chicago City Police Department</h4>
+                <p>Serving and protecting our community.</p>
+            </div>
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <a href="#" onclick="window.open('https://discord.gg/7vQEJnaD', '_blank'); return false;">File a Report</a>
+                <a href="#" onclick="showPage('community'); return false;">Community Programs</a>
+                <a href="https://discord.gg/7vQEJnaD" target="_blank">Join Us</a>
+            </div>
+            <div class="footer-section">
+                <h4>Resources</h4>
+                <a href="#" onclick="showPage('news'); return false;">News & Updates</a>
+                <a href="#" onclick="showPage('documents'); return false;">Policies</a>
+                <a href="#" onclick="showPage('leadership'); return false;">Leadership</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Chicago City Police Department. All rights reserved.</p>
+        </div>
+    </footer>
 
-<!-- HOW IT WORKS -->
-<section style="background:var(--card)">
-  <div class="inner fade">
-    <div class="section-label">Setup</div>
-    <div class="section-title">Up and running in under a minute</div>
-    <div class="steps">
-      <div class="step"><div class="step-num">01</div><h3>Invite</h3><p>Click "Add to Discord" and select your server. No config needed.</p></div>
-      <div class="step"><div class="step-num">02</div><h3>Claim</h3><p>Use /daily to get your starting coins. Use /work every minute for more.</p></div>
-      <div class="step"><div class="step-num">03</div><h3>Play</h3><p>Pick any game, place a bet, click buttons. Everything just works.</p></div>
-    </div>
-  </div>
-</section>
+    <script>
+        // Loading screen
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.body.classList.remove('loading');
+                document.getElementById('loadingScreen').classList.add('hidden');
+            }, 2000);
+        });
 
+        function showPage(pageId) {
+            const pages = document.querySelectorAll('.page');
+            pages.forEach(page => page.classList.remove('active'));
+            
+            const selectedPage = document.getElementById(pageId + '-page');
+            if (selectedPage) {
+                selectedPage.classList.add('active');
+                window.scrollTo(0, 0);
+            }
+            
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => link.classList.remove('active'));
+            
+            const nav = document.getElementById('navigation');
+            nav.classList.remove('mobile-open');
+        }
 
+        function toggleMobileMenu() {
+            const nav = document.getElementById('navigation');
+            nav.classList.toggle('mobile-open');
+        }
 
-<!-- COMMANDS -->
-<section id="commands" style="background:var(--card)">
-  <div class="inner fade">
-    <div class="section-label">Commands</div>
-    <div class="section-title">Everything is a slash command</div>
-    <div class="section-desc">Type / and pick from the list. No prefixes, no syntax to learn.</div>
-    <div class="cmd-grid">
-      <div class="cmd"><code>/mines</code><span>Gem hunt</span></div>
-      <div class="cmd"><code>/blackjack</code><span>Classic 21</span></div>
-      <div class="cmd"><code>/crash</code><span>Multiplier</span></div>
-      <div class="cmd"><code>/towers</code><span>Door climb</span></div>
-      <div class="cmd"><code>/slots</code><span>Reel machine</span></div>
-      <div class="cmd"><code>/roulette</code><span>Wheel spin</span></div>
-      <div class="cmd"><code>/baccarat</code><span>Card game</span></div>
-      <div class="cmd"><code>/coinflip</code><span>Heads/tails</span></div>
-      <div class="cmd"><code>/dice</code><span>Over/under</span></div>
-      <div class="cmd"><code>/chicken</code><span>Cross road</span></div>
-      <div class="cmd"><code>/rps</code><span>RPS</span></div>
-      <div class="cmd"><code>/wheel</code><span>Prize wheel</span></div>
-      <div class="cmd"><code>/plinko</code><span>Ball drop</span></div>
-      <div class="cmd"><code>/limbo</code><span>Hit target</span></div>
-      <div class="cmd"><code>/keno</code><span>Numbers</span></div>
-      <div class="cmd"><code>/scratch</code><span>Scratch card</span><span class="ntag">new</span></div>
-      <div class="cmd"><code>/videopoker</code><span>Hold &amp; draw</span><span class="ntag">new</span></div>
-      <div class="cmd"><code>/higherlower</code><span>Streak game</span><span class="ntag">new</span></div>
-      <div class="cmd"><code>/bombdefuser</code><span>Cut wires</span><span class="ntag">new</span></div>
-      <div class="cmd"><code>/heist</code><span>Group rob</span><span class="ntag">new</span></div>
-      <div class="cmd"><code>/diceduel</code><span>PvP dice</span><span class="ntag">new</span></div>
-      <div class="cmd"><code>/stocks</code><span>Buy/sell</span><span class="ntag">new</span></div>
-      <div class="cmd"><code>/giftbox</code><span>Mystery box</span><span class="ntag">new</span></div>
-      <div class="cmd"><code>/challenges</code><span>Daily tasks</span><span class="ntag">new</span></div>
-      <div class="cmd"><code>/achievements</code><span>Milestones</span><span class="ntag">new</span></div>
-      <div class="cmd"><code>/prestige</code><span>Reset &amp; bonus</span><span class="ntag">new</span></div>
-      <div class="cmd"><code>/tournament</code><span>Compete</span><span class="ntag">new</span></div>
-      <div class="cmd"><code>/loan</code><span>Borrow coins</span><span class="ntag">new</span></div>
-      <div class="cmd"><code>/bounty</code><span>Place bounty</span><span class="ntag">new</span></div>
-      <div class="cmd"><code>/jackpot</code><span>Server pot</span><span class="ntag">new</span></div>
-      <div class="cmd"><code>/balance</code><span>Wallet</span></div>
-      <div class="cmd"><code>/daily</code><span>Free coins</span></div>
-      <div class="cmd"><code>/work</code><span>Earn coins</span></div>
-      <div class="cmd"><code>/give</code><span>Send coins</span></div>
-      <div class="cmd"><code>/rob</code><span>Steal coins</span></div>
-      <div class="cmd"><code>/hack</code><span>Hack user</span></div>
-      <div class="cmd"><code>/shop</code><span>Buy items</span></div>
-      <div class="cmd"><code>/inventory</code><span>Your items</span></div>
-      <div class="cmd"><code>/deposit</code><span>Bank coins</span></div>
-      <div class="cmd"><code>/withdraw</code><span>From bank</span></div>
-      <div class="cmd"><code>/profile</code><span>Stats</span></div>
-      <div class="cmd"><code>/leaderboard</code><span>Top players</span></div>
-      <div class="cmd"><code>/history</code><span>Bet log</span></div>
-    </div>
-  </div>
-</section>
-
-<!-- CTA -->
-<div class="cta fade">
-  <h2>Ready to play?</h2>
-  <p>Add Rainbot to your server and start playing in seconds. Free forever.</p>
-  <a href="https://discord.com/oauth2/authorize?client_id=1478876093120512000&permissions=4504563847882960&integration_type=0&scope=bot+applications.commands" class="btn btn-primary btn-lg">Add to Discord</a>
-</div>
-
-<!-- FOOTER -->
-<footer>
-  <div class="foot-inner">
-    <div class="foot-copy">Rainbot &copy; 2026</div>
-    <div class="foot-links">
-      <a href="https://dillenmiller76-code.github.io/rainbot-legal/">Terms</a>
-      <a href="https://dillenmiller76-code.github.io/rainbot-legal/">Privacy</a>
-      <a href="https://discord.com/oauth2/authorize?client_id=1478876093120512000&permissions=4504563847882960&integration_type=0&scope=bot+applications.commands">Invite</a>
-    </div>
-  </div>
-</footer>
-
-<script>
-// ── Loader ───────────────────────────────
-window.addEventListener("DOMContentLoaded", () => {
-  setTimeout(() => document.getElementById("loader").classList.add("out"), 3000);
-});
-
-// ── Nav scroll ───────────────────────────
-window.addEventListener("scroll", () => {
-  document.getElementById("nav").classList.toggle("scrolled", scrollY > 40);
-});
-
-// ── Fade in ──────────────────────────────
-const obs = new IntersectionObserver(entries => {
-  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add("in"); obs.unobserve(e.target); } });
-}, { threshold: .12 });
-document.querySelectorAll(".fade").forEach(el => obs.observe(el));
-
-// ── Live Feed ────────────────────────────
-const FEED_DATA = [
-  { user:"dille",       game:"Crash",      mult:"14.2x", amount:284000,  win:true  },
-  { user:"RainKing",    game:"Mines",      mult:"8 gems",amount:192500,  win:true  },
-  { user:"SlotGod",     game:"Slots",      mult:"200x",  amount:1000000, win:true  },
-  { user:"CasinoAce",   game:"Blackjack",  mult:"BJ",    amount:75000,   win:true  },
-  { user:"LuckyDice",   game:"Towers",     mult:"Lv7",   amount:310000,  win:true  },
-  { user:"NightBet",    game:"Crash",      mult:"1.0x",  amount:-50000,  win:false },
-  { user:"HighRoller",  game:"Limbo",      mult:"99x",   amount:495000,  win:true  },
-  { user:"Stormchaser", game:"Roulette",   mult:"36x",   amount:180000,  win:true  },
-  { user:"QuickFlip",   game:"Coinflip",   mult:"Tails", amount:100000,  win:true  },
-  { user:"Martin",      game:"Baccarat",   mult:"9x",    amount:54000,   win:true  },
-  { user:"Bomber",      game:"Wheel",      mult:"50x",   amount:500000,  win:true  },
-  { user:"BombSquad",   game:"Bomb Defuser",mult:"12x",  amount:120000,  win:true  },
-  { user:"CryptoKing",  game:"Stocks",     mult:"+40%",  amount:200000,  win:true  },
-  { user:"Lix",         game:"Scratch",    mult:"Match", amount:60000,   win:true  },
-];
-function buildFeed() {
-  const track = document.getElementById("feedTrack");
-  const items = [...FEED_DATA, ...FEED_DATA]; // double for seamless loop
-  track.innerHTML = items.map(d => `
-    <div class="feed-item">
-      <span>⚡</span>
-      <span><strong>${d.user}</strong></span>
-      <span>played</span>
-      <span class="game-tag">${d.game}</span>
-      <span>${d.win ? "and won" : "and lost"}</span>
-      <span class="${d.win ? "win-amt" : "loss-amt"}">${d.win ? "+" : ""}${Math.abs(d.amount).toLocaleString()}</span>
-    </div>
-  `).join("");
-}
-buildFeed();
-</script>
+        function handleLogin(event) {
+            event.preventDefault();
+            alert('This is a demonstration portal. In production, this would connect to your authentication system.');
+            return false;
+        }
+    </script>
 </body>
 </html>
